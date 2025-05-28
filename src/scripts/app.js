@@ -32,12 +32,15 @@ function renderCalendar() {
             const dayCell = document.createElement('div');
             dayCell.classList.add('day-cell');
             dayCell.innerText = day;
-            dayCell.classList.toggle('exercised', exerciseDays[`${monthIndex + 1}-${day}`]);
+            // Asegura que el color se actualiza correctamente al renderizar
+            if (exerciseDays[`${monthIndex + 1}-${day}`]) {
+                dayCell.classList.add('exercised');
+            }
 
             dayCell.addEventListener('click', () => {
                 const fecha = new Date(year, monthIndex, day);
                 const diaSemana = fecha.getDay(); // 0=domingo, 1=lunes, ...
-                mostrarModalRutina(diaSemana, monthIndex + 1, day, dayCell);
+                mostrarModalRutina(diaSemana, monthIndex + 1, day);
             });
 
             daysGrid.appendChild(dayCell);
@@ -48,7 +51,7 @@ function renderCalendar() {
     });
 }
 
-function mostrarModalRutina(diaSemana, mes, dia, dayCell) {
+function mostrarModalRutina(diaSemana, mes, dia) {
     const rutina = rutinasPorDia[diaSemana];
     if (!rutina) return;
 
@@ -68,8 +71,9 @@ function mostrarModalRutina(diaSemana, mes, dia, dayCell) {
     document.getElementById('completar-btn').onclick = () => {
         exerciseDays[`${mes}-${dia}`] = true;
         saveExerciseDays();
-        dayCell.classList.add('exercised');
         modal.remove();
+        // Vuelve a renderizar el calendario para actualizar el color del día
+        renderCalendar();
     };
 }
 
