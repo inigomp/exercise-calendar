@@ -100,3 +100,38 @@ footer {
     margin: 20px 0;
     color: #888;
 }
+/* ...existing code... */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #23272f;
+  color: #e0e0e0;
+  padding: 2em;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 95%;
+  box-shadow: 0 4px 24px rgba(20, 20, 40, 0.45);
+}
+.modal-content button {
+  margin: 0.7em 0.7em 0 0;
+  padding: 0.5em 1.2em;
+  border-radius: 6px;
+  border: none;
+  background: #43e97b;
+  color: #232526;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-content button#cerrar-btn {
+  background: #3949ab;
+  color: #fff;
+}
+.modal-content button:hover {
+  opacity: 0.85;
+}
