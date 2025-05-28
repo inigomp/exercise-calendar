@@ -1,0 +1,102 @@
+body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: linear-gradient(120deg, #232526, #414345);
+    min-height: 100vh;
+    color: #e0e0e0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 32px 28px;
+    background: #23272f;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(20, 20, 40, 0.35);
+}
+
+h1 {
+    text-align: center;
+    color: #90caf9;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.icon {
+    font-size: 2.2rem;
+    vertical-align: middle;
+}
+
+.month {
+    margin-bottom: 32px;
+    background: #282c34;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(20, 20, 40, 0.18);
+    padding: 18px 0 10px 0;
+}
+
+.month h3 {
+    text-align: center;
+    color: #90caf9;
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.day-cell {
+    background: #23272f;
+    border: 1px solid #444857;
+    padding: 13px 0;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 7px;
+    font-size: 1.05rem;
+    color: #e0e0e0;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 3px rgba(20, 20, 40, 0.10);
+}
+
+.day-cell:hover {
+    background: #3949ab;
+    color: #fff;
+}
+
+.day-cell.exercised {
+    background: linear-gradient(120deg, #43e97b 0%, #38f9d7 100%);
+    color: #232526;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(67, 233, 123, 0.15);
+    border: 1.5px solid #43e97b;
+}
+
+.day-cell.empty {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: default;
+}
+
+#message {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 1.1rem;
+    color: #90caf9;
+}
+
+footer {
+    text-align: center;
+    margin: 20px 0;
+    color: #888;
+}
