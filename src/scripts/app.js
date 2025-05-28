@@ -12,9 +12,14 @@ function renderCalendar() {
     const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const daysInMonth = [31, (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-    // Recarga los días ejercitados desde localStorage
     const exerciseDays = getExerciseDays();
     console.log('Días ejercitados cargados:', exerciseDays);
+
+    // Obtén la fecha de hoy
+    const today = new Date();
+    const todayYear = today.getFullYear();
+    const todayMonth = today.getMonth();
+    const todayDate = today.getDate();
 
     monthNames.forEach((month, monthIndex) => {
         const monthDiv = document.createElement('div');
@@ -43,6 +48,10 @@ function renderCalendar() {
             if (exerciseDays[`${monthIndex + 1}-${day}`]) {
                 dayCell.classList.add('exercised');
             }
+            // Marca el día de hoy con un id especial si corresponde al año del calendario
+            if (year === todayYear && monthIndex === todayMonth && day === todayDate) {
+                dayCell.id = 'today-cell';
+            }
 
             dayCell.addEventListener('click', () => {
                 const fecha = new Date(year, monthIndex, day);
@@ -56,6 +65,14 @@ function renderCalendar() {
         monthDiv.appendChild(daysGrid);
         calendarContainer.appendChild(monthDiv);
     });
+
+    // Desplaza la vista al día de hoy si existe en el calendario
+    setTimeout(() => {
+        const todayElem = document.getElementById('today-cell');
+        if (todayElem) {
+            todayElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, 0);
 }
 
 function mostrarModalRutina(diaSemana, mes, dia) {
