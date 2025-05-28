@@ -2,12 +2,19 @@ import { rutinasPorDia } from './rutinas.js';
 
 const year = 2025;
 const calendarContainer = document.getElementById('calendar');
-const exerciseDays = JSON.parse(localStorage.getItem('exerciseDays')) || {};
+
+function getExerciseDays() {
+    return JSON.parse(localStorage.getItem('exerciseDays')) || {};
+}
 
 function renderCalendar() {
     calendarContainer.innerHTML = '';
     const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const daysInMonth = [31, (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    // Recarga los días ejercitados desde localStorage
+    const exerciseDays = getExerciseDays();
+    console.log('Días ejercitados cargados:', exerciseDays);
 
     monthNames.forEach((month, monthIndex) => {
         const monthDiv = document.createElement('div');
@@ -32,7 +39,7 @@ function renderCalendar() {
             const dayCell = document.createElement('div');
             dayCell.classList.add('day-cell');
             dayCell.innerText = day;
-            // Asegura que el color se actualiza correctamente al renderizar
+            // Aplica la clase si el día está marcado
             if (exerciseDays[`${monthIndex + 1}-${day}`]) {
                 dayCell.classList.add('exercised');
             }
@@ -69,16 +76,17 @@ function mostrarModalRutina(diaSemana, mes, dia) {
 
     document.getElementById('cerrar-btn').onclick = () => modal.remove();
     document.getElementById('completar-btn').onclick = () => {
+        // Recarga los días ejercitados antes de modificar
+        const exerciseDays = getExerciseDays();
         exerciseDays[`${mes}-${dia}`] = true;
-        saveExerciseDays();
+        saveExerciseDays(exerciseDays);
         modal.remove();
-        // Vuelve a renderizar el calendario para actualizar el color del día
         renderCalendar();
     };
 }
 
-function saveExerciseDays() {
-    localStorage.setItem('exerciseDays', JSON.stringify(exerciseDays));
+function saveExerciseDays(daysObj) {
+    localStorage.setItem('exerciseDays', JSON.stringify(daysObj));
 }
 
 document.addEventListener('DOMContentLoaded', renderCalendar);
