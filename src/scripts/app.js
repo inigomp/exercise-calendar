@@ -44,13 +44,22 @@ function renderCalendar() {
             const dayCell = document.createElement('div');
             dayCell.classList.add('day-cell');
             dayCell.innerText = day;
+            const key = `${monthIndex + 1}-${day}`;
             // Aplica la clase si el día está marcado
-            if (exerciseDays[`${monthIndex + 1}-${day}`]) {
+            if (exerciseDays[key]) {
                 dayCell.classList.add('exercised');
             }
             // Marca el día de hoy con un id especial si corresponde al año del calendario
             if (year === todayYear && monthIndex === todayMonth && day === todayDate) {
                 dayCell.id = 'today-cell';
+            }
+            // Marca los días pasados no ejercitados como fallados
+            const cellDate = new Date(year, monthIndex, day);
+            if (
+                cellDate < new Date(todayYear, todayMonth, todayDate) && // día pasado
+                !exerciseDays[key]
+            ) {
+                dayCell.classList.add('missed');
             }
 
             dayCell.addEventListener('click', () => {
