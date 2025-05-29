@@ -16,6 +16,14 @@ async function saveExerciseDaySupabase(year, month, day) {
     ]);
 }
 
+// Elimina un día ejercitado en Supabase
+async function removeExerciseDaySupabase(year, month, day) {
+    await supabase
+        .from('exercise_days')
+        .delete()
+        .match({ user_id, year, month, day });
+}
+
 // Obtiene todos los días ejercitados del usuario
 async function getExerciseDaysSupabase(year) {
     try {
@@ -96,10 +104,16 @@ async function renderCalendar() {
                 dayCell.classList.add('missed');
             }
 
-            dayCell.addEventListener('click', () => {
-                const fecha = new Date(year, monthIndex, day);
-                const diaSemana = fecha.getDay();
-                mostrarModalRutina(diaSemana, monthIndex + 1, day);
+            dayCell.addEventListener('click', async () => {
+                if (exerciseDays[key]) {
+                    // Si ya está marcado, desmarcar
+                    await removeExerciseDaySupabase(year, monthIndex + 1, day);
+                    await renderCalendar();
+                } else {
+                    const fecha = new Date(year, monthIndex, day);
+                    const diaSemana = fecha.getDay();
+                    mostrarModalRutina(diaSemana, monthIndex + 1, day);
+                }
             });
 
             daysGrid.appendChild(dayCell);
