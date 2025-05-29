@@ -1,4 +1,4 @@
-export const rutinasPorDia = {
+var rutinasPorDia = {
   1: {
     titulo: "Lunes - Cuerpo completo (fuerza + cardio)",
     contenido: `
