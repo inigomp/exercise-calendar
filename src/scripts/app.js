@@ -2,7 +2,7 @@
 // Quita el import y usa la versión global de la CDN
 // import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY; // <-- Pega aquí tu clave pública
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllYmFoY3BueHNkaGZicWdleG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1MTM3NTEsImV4cCI6MjA2NDA4OTc1MX0.sdqlH7APvwQkWW9f5iRmxKEL9uMO46nTklVkQTiWNKc'; // <-- Pega aquí tu clave pública
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 // Usa un UUID válido para user_id
