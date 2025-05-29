@@ -1,11 +1,9 @@
 // Inicializa Supabase
-const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'; // <-- pon aquí tu URL de Supabase
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllYmFoY3BueHNkaGZicWdleG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1MTM3NTEsImV4cCI6MjA2NDA4OTc1MX0.sdqlH7APvwQkWW9f5iRmxKEL9uMO46nTklVkQTiWNKc'; // <-- pon aquí tu anon key
+const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllYmFoY3BueHNkaGZicWdleG9uIiwicm9zZSI6ImFub24iLCJpYXQiOjE3NDg1MTM3NTEsImV4cCI6MjA2NDA4OTc1MX0.sdqlH7APvwQkWW9f5iRmxKEL9uMO46nTklVkQTiWNKc';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-// Simula un user_id (en producción usa auth de Supabase)
 const user_id = 'user-id-estatico-o-de-auth';
-
 const year = 2025;
 const calendarContainer = document.getElementById('calendar');
 
@@ -18,26 +16,41 @@ async function saveExerciseDaySupabase(year, month, day) {
 
 // Obtiene todos los días ejercitados del usuario
 async function getExerciseDaysSupabase(year) {
-    const { data, error } = await supabase
-        .from('exercise_days')
-        .select('*')
-        .eq('user_id', user_id)
-        .eq('year', year);
-    if (error) return {};
-    // Devuelve un objeto clave: `${month}-${day}` => true
-    return Object.fromEntries(
-        data.filter(r => r.done).map(r => [`${r.month}-${r.day}`, true])
-    );
+    try {
+        const { data, error } = await supabase
+            .from('exercise_days')
+            .select('*')
+            .eq('user_id', user_id)
+            .eq('year', year);
+        if (error) {
+            console.error("Error al obtener días de ejercicio de Supabase:", error);
+            return {};
+        }
+        return Object.fromEntries(
+            data.filter(r => r.done).map(r => [`${r.month}-${r.day}`, true])
+        );
+    } catch (e) {
+        console.error("Error de conexión con Supabase:", e);
+        return {};
+    }
 }
 
 async function renderCalendar() {
+    if (!calendarContainer) {
+        console.error("No se encontró el contenedor #calendar");
+        return;
+    }
     calendarContainer.innerHTML = '';
     const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const daysInMonth = [31, (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-    const exerciseDays = await getExerciseDaysSupabase(year);
+    let exerciseDays = {};
+    try {
+        exerciseDays = await getExerciseDaysSupabase(year);
+    } catch (e) {
+        exerciseDays = {};
+    }
 
-    // Obtén la fecha de hoy
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth();
@@ -67,18 +80,15 @@ async function renderCalendar() {
             dayCell.classList.add('day-cell');
             dayCell.innerText = day;
             const key = `${monthIndex + 1}-${day}`;
-            // Aplica la clase si el día está marcado
             if (exerciseDays[key]) {
                 dayCell.classList.add('exercised');
             }
-            // Marca el día de hoy con un id especial si corresponde al año del calendario
             if (year === todayYear && monthIndex === todayMonth && day === todayDate) {
                 dayCell.id = 'today-cell';
             }
-            // Marca los días pasados no ejercitados como fallados
             const cellDate = new Date(year, monthIndex, day);
             if (
-                cellDate < new Date(todayYear, todayMonth, todayDate) && // día pasado
+                cellDate < new Date(todayYear, todayMonth, todayDate) &&
                 !exerciseDays[key]
             ) {
                 dayCell.classList.add('missed');
@@ -86,7 +96,7 @@ async function renderCalendar() {
 
             dayCell.addEventListener('click', () => {
                 const fecha = new Date(year, monthIndex, day);
-                const diaSemana = fecha.getDay(); // 0=domingo, 1=lunes, ...
+                const diaSemana = fecha.getDay();
                 mostrarModalRutina(diaSemana, monthIndex + 1, day);
             });
 
@@ -97,7 +107,6 @@ async function renderCalendar() {
         calendarContainer.appendChild(monthDiv);
     });
 
-    // Desplaza la vista al día de hoy si existe en el calendario
     setTimeout(() => {
         const todayElem = document.getElementById('today-cell');
         if (todayElem) {
