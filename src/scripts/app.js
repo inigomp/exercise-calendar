@@ -1,9 +1,9 @@
 // Inicializa Supabase
-import { createClient } from '@supabase/supabase-js'
+// Quita el import y usa la versión global de la CDN
+// import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'
-// Sustituye la siguiente línea por tu clave pública (anon) de Supabase
 const supabaseKey = 'TU_SUPABASE_ANON_KEY_AQUI'; // <-- Pega aquí tu clave pública
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 // Usa un UUID válido para user_id
 const user_id = '00000000-0000-0000-0000-000000000001';
