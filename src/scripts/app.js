@@ -1,7 +1,8 @@
 // Inicializa Supabase
 import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
+// Sustituye la siguiente línea por tu clave pública (anon) de Supabase
+const supabaseKey = 'TU_SUPABASE_ANON_KEY_AQUI'; // <-- Pega aquí tu clave pública
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Usa un UUID válido para user_id
@@ -104,9 +105,10 @@ async function renderCalendar() {
                 dayCell.classList.add('missed');
             }
 
-            dayCell.addEventListener('click', async () => {
+            dayCell.addEventListener('click', async (e) => {
+                e.stopPropagation();
                 if (exerciseDays[key]) {
-                    // Si ya está marcado, desmarcar
+                    // Si ya está marcado, desmarcar y actualizar calendario
                     await removeExerciseDaySupabase(year, monthIndex + 1, day);
                     await renderCalendar();
                 } else {
