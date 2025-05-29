@@ -1,5 +1,3 @@
-import { rutinasPorDia } from './rutinas.js';
-
 // Inicializa Supabase
 const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'; // <-- pon aquí tu URL de Supabase
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllYmFoY3BueHNkaGZicWdleG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1MTM3NTEsImV4cCI6MjA2NDA4OTc1MX0.sdqlH7APvwQkWW9f5iRmxKEL9uMO46nTklVkQTiWNKc'; // <-- pon aquí tu anon key
