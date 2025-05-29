@@ -1,19 +1,43 @@
 import { rutinasPorDia } from './rutinas.js';
 
+// Inicializa Supabase
+const supabaseUrl = 'https://yebahcpnxsdhfbqgexon.supabase.co'; // <-- pon aquí tu URL de Supabase
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InllYmFoY3BueHNkaGZicWdleG9uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1MTM3NTEsImV4cCI6MjA2NDA4OTc1MX0.sdqlH7APvwQkWW9f5iRmxKEL9uMO46nTklVkQTiWNKc'; // <-- pon aquí tu anon key
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Simula un user_id (en producción usa auth de Supabase)
+const user_id = 'user-id-estatico-o-de-auth';
+
 const year = 2025;
 const calendarContainer = document.getElementById('calendar');
 
-function getExerciseDays() {
-    return JSON.parse(localStorage.getItem('exerciseDays')) || {};
+// Guarda un día como ejercitado en Supabase
+async function saveExerciseDaySupabase(year, month, day) {
+    await supabase.from('exercise_days').upsert([
+        { user_id, year, month, day, done: true }
+    ]);
 }
 
-function renderCalendar() {
+// Obtiene todos los días ejercitados del usuario
+async function getExerciseDaysSupabase(year) {
+    const { data, error } = await supabase
+        .from('exercise_days')
+        .select('*')
+        .eq('user_id', user_id)
+        .eq('year', year);
+    if (error) return {};
+    // Devuelve un objeto clave: `${month}-${day}` => true
+    return Object.fromEntries(
+        data.filter(r => r.done).map(r => [`${r.month}-${r.day}`, true])
+    );
+}
+
+async function renderCalendar() {
     calendarContainer.innerHTML = '';
     const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     const daysInMonth = [31, (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-    const exerciseDays = getExerciseDays();
-    console.log('Días ejercitados cargados:', exerciseDays);
+    const exerciseDays = await getExerciseDaysSupabase(year);
 
     // Obtén la fecha de hoy
     const today = new Date();
@@ -84,7 +108,7 @@ function renderCalendar() {
     }, 0);
 }
 
-function mostrarModalRutina(diaSemana, mes, dia) {
+async function mostrarModalRutina(diaSemana, mes, dia) {
     const rutina = rutinasPorDia[diaSemana];
     if (!rutina) return;
 
@@ -101,18 +125,11 @@ function mostrarModalRutina(diaSemana, mes, dia) {
     document.body.appendChild(modal);
 
     document.getElementById('cerrar-btn').onclick = () => modal.remove();
-    document.getElementById('completar-btn').onclick = () => {
-        // Recarga los días ejercitados antes de modificar
-        const exerciseDays = getExerciseDays();
-        exerciseDays[`${mes}-${dia}`] = true;
-        saveExerciseDays(exerciseDays);
+    document.getElementById('completar-btn').onclick = async () => {
+        await saveExerciseDaySupabase(year, mes, dia);
         modal.remove();
         renderCalendar();
     };
-}
-
-function saveExerciseDays(daysObj) {
-    localStorage.setItem('exerciseDays', JSON.stringify(daysObj));
 }
 
 document.addEventListener('DOMContentLoaded', renderCalendar);
